@@ -1,5 +1,5 @@
 from django.utils import timezone
-import time
+
 
 from resources.models import Resource
 from metrics.models import MetricDefinition, MetricData
