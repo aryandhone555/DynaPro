@@ -18,4 +18,3 @@ class Command(BaseCommand):
                 f"{count} metric records created"
             )
         )
-

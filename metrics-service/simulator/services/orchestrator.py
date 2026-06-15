@@ -1,4 +1,5 @@
 from django.utils import timezone
+import time
 
 from resources.models import Resource
 from metrics.models import MetricDefinition, MetricData
@@ -19,7 +20,7 @@ def run_simulation():
         is_active=True
     )
 
-    records_created = 0
+    records = []   # ← Missing
 
     for resource in resources:
 
@@ -47,14 +48,16 @@ def run_simulation():
                 metric.critical_threshold
             )
 
-            MetricData.objects.create(
-                resource=resource,
-                metric=metric,
-                value=value,
-                status=status,
-                timestamp=timezone.now()
+            records.append(
+                MetricData(
+                    resource=resource,
+                    metric=metric,
+                    value=value,
+                    status=status,
+                    timestamp=timezone.now()
+                )
             )
 
-            records_created += 1
+    MetricData.objects.bulk_create(records)  # ← Missing
 
-    return records_created
+    return len(records)  # ← Better than records_created
