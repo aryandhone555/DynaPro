@@ -88,3 +88,18 @@ class TrendPointSerializer(
     value = serializers.FloatField()
 
     status = serializers.CharField()
+
+
+class ResourceHealthSerializer(
+    serializers.Serializer
+):
+
+    resource_id = serializers.IntegerField()
+
+    resource_name = serializers.CharField()
+
+    resource_type = serializers.CharField()
+
+    status = serializers.CharField()
+
+    last_updated = serializers.DateTimeField()

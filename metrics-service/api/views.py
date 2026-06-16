@@ -17,7 +17,9 @@ from .serializers import (
     MetricDataSerializer,
     DashboardSummarySerializer,
     TopOffenderSerializer,
-    TrendPointSerializer
+    TrendPointSerializer,
+    ResourceHealthSerializer
+
 )
 
 from metrics.models import MetricData
@@ -26,9 +28,9 @@ from django.utils.dateparse import (
     parse_datetime
 )
 
-from django.db.models import OuterRef
-from django.db.models import Subquery
-from django.db.models import Count
+# from django.db.models import OuterRef
+# from django.db.models import Subquery
+# from django.db.models import Count
 
 from django.db.models import Max
 
@@ -331,6 +333,66 @@ class DashboardTrendView(APIView):
         serializer = (
             TrendPointSerializer(
                 queryset,
+                many=True
+            )
+        )
+
+        return Response(
+            serializer.data
+        )
+    
+class ResourceHealthView(APIView):
+
+    def get(self, request):
+
+        latest_timestamps = (
+            MetricData.objects
+            .values("resource_id")
+            .annotate(
+                latest_time=Max("timestamp")
+            )
+        )
+
+        results = []
+
+        for row in latest_timestamps:
+
+            latest_record = (
+                MetricData.objects
+                .select_related(
+                    "resource"
+                )
+                .filter(
+                    resource_id=row["resource_id"],
+                    timestamp=row["latest_time"]
+                )
+                .first()
+            )
+
+            if not latest_record:
+                continue
+
+            results.append({
+
+                "resource_id":
+                latest_record.resource.id,
+
+                "resource_name":
+                latest_record.resource.name,
+
+                "resource_type":
+                latest_record.resource.resource_type,
+
+                "status":
+                latest_record.status,
+
+                "last_updated":
+                latest_record.timestamp
+            })
+
+        serializer = (
+            ResourceHealthSerializer(
+                results,
                 many=True
             )
         )

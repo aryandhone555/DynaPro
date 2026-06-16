@@ -7,7 +7,8 @@ from .views import (
     MetricDataView,
     DashboardSummaryView,
     TopOffendersView,
-    DashboardTrendView
+    DashboardTrendView,
+    ResourceHealthView
 )
 urlpatterns = [
 
@@ -35,6 +36,11 @@ urlpatterns = [
     "dashboard/trends/",
     DashboardTrendView.as_view(),
     name="dashboard-trends"
+    ),
+    path(
+    "dashboard/resource-health/",
+    ResourceHealthView.as_view(),
+    name="resource-health"
     ),
 
 ]
