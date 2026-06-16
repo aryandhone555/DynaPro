@@ -7,13 +7,17 @@ from resources.models import Resource
 
 from metrics.models import MetricDefinition
 
+from datetime import timedelta
 
+from django.utils import timezone
 
 from .serializers import (
     ResourceSerializer,
     MetricDefinitionSerializer,
     MetricDataSerializer,
-    DashboardSummarySerializer
+    DashboardSummarySerializer,
+    TopOffenderSerializer,
+    TrendPointSerializer
 )
 
 from metrics.models import MetricData
@@ -198,6 +202,137 @@ class DashboardSummaryView(APIView):
 
         serializer = DashboardSummarySerializer(
             data
+        )
+
+        return Response(
+            serializer.data
+        )
+    
+
+class TopOffendersView(APIView):
+
+    def get(self, request):
+
+        latest_timestamps = (
+            MetricData.objects
+            .values("resource_id")
+            .annotate(
+                latest_time=Max("timestamp")
+            )
+        )
+
+        offenders = []
+
+        for row in latest_timestamps:
+
+            latest_record = (
+                MetricData.objects
+                .select_related(
+                    "resource"
+                )
+                .filter(
+                    resource_id=row["resource_id"],
+                    timestamp=row["latest_time"]
+                )
+                .first()
+            )
+
+            if not latest_record:
+                continue
+
+            if latest_record.status in [
+                "RED",
+                "AMBER"
+            ]:
+
+                offenders.append({
+
+                    "resource_id":
+                    latest_record.resource.id,
+
+                    "resource_name":
+                    latest_record.resource.name,
+
+                    "resource_type":
+                    latest_record.resource.resource_type,
+
+                    "status":
+                    latest_record.status
+                })
+
+        status_order = {
+            "RED": 0,
+            "AMBER": 1
+        }
+
+        offenders.sort(
+            key=lambda x:
+            status_order[x["status"]]
+        )
+
+        serializer = (
+            TopOffenderSerializer(
+                offenders,
+                many=True
+            )
+        )
+
+        return Response(
+            serializer.data
+        )
+    
+
+class DashboardTrendView(APIView):
+
+    def get(self, request):
+
+        resource_id = request.GET.get(
+            "resource_id"
+        )
+
+        metric_id = request.GET.get(
+            "metric_id"
+        )
+
+        minutes = int(
+            request.GET.get(
+                "minutes",
+                60
+            )
+        )
+
+        end_time = timezone.now()
+
+        start_time = (
+            end_time -
+            timedelta(
+                minutes=minutes
+            )
+        )
+
+        queryset = (
+            MetricData.objects
+            .filter(
+                resource_id=resource_id,
+                metric_id=metric_id,
+                timestamp__gte=start_time,
+                timestamp__lte=end_time
+            )
+            .order_by(
+                "timestamp"
+            )
+            .values(
+                "timestamp",
+                "value",
+                "status"
+            )
+        )
+
+        serializer = (
+            TrendPointSerializer(
+                queryset,
+                many=True
+            )
         )
 
         return Response(

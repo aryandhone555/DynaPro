@@ -67,3 +67,24 @@ class DashboardSummarySerializer(
 
     red = serializers.IntegerField()
 
+class TopOffenderSerializer(
+    serializers.Serializer
+):
+
+    resource_id = serializers.IntegerField()
+
+    resource_name = serializers.CharField()
+
+    resource_type = serializers.CharField()
+
+    status = serializers.CharField()
+
+class TrendPointSerializer(
+    serializers.Serializer
+):
+
+    timestamp = serializers.DateTimeField()
+
+    value = serializers.FloatField()
+
+    status = serializers.CharField()
