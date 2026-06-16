@@ -3,7 +3,8 @@ from django.urls import path
 
 from .views import (
     ResourceListView,
-    ResourceMetricsView
+    ResourceMetricsView,
+    MetricDataView
 )
 urlpatterns = [
 
@@ -12,6 +13,11 @@ urlpatterns = [
     ResourceMetricsView.as_view(),
     name="resource-metrics"
     ),
+    path(
+    "metric-data/",
+    MetricDataView.as_view(),
+    name="metric-data"
+),
 
 ]
 

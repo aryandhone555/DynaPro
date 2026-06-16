@@ -34,3 +34,20 @@ class MetricDefinitionSerializer(
             "warning_threshold",
             "critical_threshold"
         ]
+
+from metrics.models import MetricData
+
+
+class MetricDataSerializer(
+    serializers.ModelSerializer
+):
+
+    class Meta:
+
+        model = MetricData
+
+        fields = [
+            "timestamp",
+            "value",
+            "status"
+        ]
