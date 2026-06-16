@@ -51,3 +51,19 @@ class MetricDataSerializer(
             "value",
             "status"
         ]
+
+from rest_framework import serializers
+
+
+class DashboardSummarySerializer(
+    serializers.Serializer
+):
+
+    total_resources = serializers.IntegerField()
+
+    green = serializers.IntegerField()
+
+    amber = serializers.IntegerField()
+
+    red = serializers.IntegerField()
+

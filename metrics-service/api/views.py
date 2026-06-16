@@ -12,7 +12,8 @@ from metrics.models import MetricDefinition
 from .serializers import (
     ResourceSerializer,
     MetricDefinitionSerializer,
-    MetricDataSerializer
+    MetricDataSerializer,
+    DashboardSummarySerializer
 )
 
 from metrics.models import MetricData
@@ -20,6 +21,14 @@ from metrics.models import MetricData
 from django.utils.dateparse import (
     parse_datetime
 )
+
+from django.db.models import OuterRef
+from django.db.models import Subquery
+from django.db.models import Count
+
+from django.db.models import Max
+
+
 
 class ResourceListView(ListAPIView):
 
@@ -131,4 +140,66 @@ class MetricDataView(
             queryset
             .order_by("-timestamp")
             [:1000]
+        )
+    
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+class DashboardSummaryView(APIView):
+
+    def get(self, request):
+
+        latest_timestamps = (
+            MetricData.objects
+            .values("resource_id")
+            .annotate(
+                latest_time=Max("timestamp")
+            )
+        )
+
+        green = 0
+        amber = 0
+        red = 0
+
+        for row in latest_timestamps:
+
+            latest_record = (
+                MetricData.objects
+                .filter(
+                    resource_id=row["resource_id"],
+                    timestamp=row["latest_time"]
+                )
+                .first()
+            )
+
+            if not latest_record:
+                continue
+
+            if latest_record.status == "GREEN":
+                green += 1
+
+            elif latest_record.status == "AMBER":
+                amber += 1
+
+            elif latest_record.status == "RED":
+                red += 1
+
+        data = {
+
+            "total_resources":
+            Resource.objects.filter(
+                is_active=True
+            ).count(),
+
+            "green": green,
+            "amber": amber,
+            "red": red,
+        }
+
+        serializer = DashboardSummarySerializer(
+            data
+        )
+
+        return Response(
+            serializer.data
         )

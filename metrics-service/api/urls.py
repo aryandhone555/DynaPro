@@ -4,7 +4,8 @@ from django.urls import path
 from .views import (
     ResourceListView,
     ResourceMetricsView,
-    MetricDataView
+    MetricDataView,
+    DashboardSummaryView
 )
 urlpatterns = [
 
@@ -17,7 +18,12 @@ urlpatterns = [
     "metric-data/",
     MetricDataView.as_view(),
     name="metric-data"
-),
+    ),
+    path(
+    "dashboard/summary/",
+    DashboardSummaryView.as_view(),
+    name="dashboard-summary"
+    ),
 
 ]
 
