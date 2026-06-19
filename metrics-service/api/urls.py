@@ -9,7 +9,8 @@ from .views import (
     TopOffendersView,
     DashboardTrendView,
     ResourceHealthView,
-    AlertsView
+    AlertsView,
+    CurrentUserView
 )
 urlpatterns = [
 
@@ -47,6 +48,10 @@ urlpatterns = [
     "dashboard/alerts/",
     AlertsView.as_view(),
     name="alerts"
+    ),
+    path(
+    "me/",
+    CurrentUserView.as_view()
     ),
 ]
 

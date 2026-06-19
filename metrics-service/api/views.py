@@ -25,6 +25,8 @@ from .serializers import (
 
 from metrics.models import MetricData
 
+from rest_framework.permissions import IsAuthenticated #JWT AUTHENTICATION
+
 from django.utils.dateparse import (
     parse_datetime
 )
@@ -50,6 +52,7 @@ class ResourceListView(ListAPIView):
 class ResourceMetricsView(
     ListAPIView
 ):
+    permission_classes = [IsAuthenticated]
 
     serializer_class = (
         MetricDefinitionSerializer
@@ -78,6 +81,7 @@ class ResourceMetricsView(
 class MetricDataView(
     ListAPIView
 ):
+    permission_classes = [IsAuthenticated]
 
     serializer_class = (
         MetricDataSerializer
@@ -153,6 +157,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 class DashboardSummaryView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
@@ -212,7 +217,8 @@ class DashboardSummaryView(APIView):
         )
     
 
-class TopOffendersView(APIView):
+class TopOffendersView(APIView):    
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
@@ -286,6 +292,7 @@ class TopOffendersView(APIView):
     
 
 class DashboardTrendView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
@@ -343,6 +350,7 @@ class DashboardTrendView(APIView):
         )
     
 class ResourceHealthView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
 
@@ -402,7 +410,7 @@ class ResourceHealthView(APIView):
             serializer.data
         )
 class AlertsView(APIView):
-
+    permission_classes = [IsAuthenticated]
     def get(self, request):
 
         latest_records = []
@@ -476,6 +484,24 @@ class AlertsView(APIView):
         serializer = AlertSerializer(
             alerts,
             many=True
+        )
+
+        return Response(
+            serializer.data
+        )
+    
+from rest_framework.permissions import IsAuthenticated
+from .serializers import UserSerializer
+class CurrentUserView(APIView):
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+    def get(self, request):
+
+        serializer = UserSerializer(
+            request.user
         )
 
         return Response(
