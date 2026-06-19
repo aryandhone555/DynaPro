@@ -43,9 +43,10 @@ def run_simulation():
                 )
 
             status = calculate_status(
-                value,
-                metric.warning_threshold,
-                metric.critical_threshold
+             value,
+            metric.warning_threshold,
+            metric.critical_threshold,
+            metric.name
             )
 
             records.append(

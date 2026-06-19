@@ -8,7 +8,8 @@ from .views import (
     DashboardSummaryView,
     TopOffendersView,
     DashboardTrendView,
-    ResourceHealthView
+    ResourceHealthView,
+    AlertsView
 )
 urlpatterns = [
 
@@ -42,6 +43,10 @@ urlpatterns = [
     ResourceHealthView.as_view(),
     name="resource-health"
     ),
-
+    path(
+    "dashboard/alerts/",
+    AlertsView.as_view(),
+    name="alerts"
+    ),
 ]
 

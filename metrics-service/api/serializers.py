@@ -103,3 +103,19 @@ class ResourceHealthSerializer(
     status = serializers.CharField()
 
     last_updated = serializers.DateTimeField()
+
+class AlertSerializer(
+    serializers.Serializer
+):
+
+    resource_name = serializers.CharField()
+
+    resource_type = serializers.CharField()
+
+    metric_name = serializers.CharField()
+
+    value = serializers.FloatField()
+
+    status = serializers.CharField()
+
+    timestamp = serializers.DateTimeField()

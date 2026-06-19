@@ -18,7 +18,8 @@ from .serializers import (
     DashboardSummarySerializer,
     TopOffenderSerializer,
     TrendPointSerializer,
-    ResourceHealthSerializer
+    ResourceHealthSerializer,
+    AlertSerializer,
 
 )
 
@@ -395,6 +396,86 @@ class ResourceHealthView(APIView):
                 results,
                 many=True
             )
+        )
+
+        return Response(
+            serializer.data
+        )
+class AlertsView(APIView):
+
+    def get(self, request):
+
+        latest_records = []
+
+        for resource in Resource.objects.filter(
+            is_active=True
+        ):
+
+            metrics = MetricDefinition.objects.filter(
+                resource_type=resource.resource_type
+            )
+
+            for metric in metrics:
+
+                latest_record = (
+                    MetricData.objects
+                    .select_related(
+                        "resource",
+                        "metric"
+                    )
+                    .filter(
+                        resource=resource,
+                        metric=metric
+                    )
+                    .order_by(
+                        "-timestamp"
+                    )
+                    .first()
+                )
+
+                if (
+                    latest_record and
+                    latest_record.status != "GREEN"
+                ):
+                    latest_records.append(
+                        latest_record
+                    )
+
+        alerts = []
+
+        for record in latest_records:
+
+            alerts.append({
+
+                "resource_name":
+                record.resource.name,
+
+                "resource_type":
+                record.resource.resource_type,
+
+                "metric_name":
+                record.metric.name,
+
+                "value":
+                record.value,
+
+                "status":
+                record.status,
+
+                "timestamp":
+                record.timestamp
+            })
+
+        alerts.sort(
+            key=lambda x: (
+                0 if x["status"] == "RED"
+                else 1
+            )
+        )
+
+        serializer = AlertSerializer(
+            alerts,
+            many=True
         )
 
         return Response(
