@@ -157,6 +157,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 class DashboardSummaryView(APIView):
+    from .permissions import IsAdminRole
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
