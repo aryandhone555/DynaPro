@@ -20,6 +20,7 @@ from .serializers import (
     TrendPointSerializer,
     ResourceHealthSerializer,
     AlertSerializer,
+    CreateUserSerializer
 
 )
 
@@ -28,7 +29,7 @@ from .permissions import IsAdminRole
 from .serializers import UserSerializer
 
 from metrics.models import MetricData
-
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated #JWT AUTHENTICATION
 
 from django.utils.dateparse import (
@@ -529,6 +530,24 @@ class UserListView(APIView):
             many=True
         )
 
-        return Response(
-            serializer.data
+        return Response(serializer.data)
+
+    def post(self, request):
+
+        serializer = CreateUserSerializer(
+            data=request.data
         )
+
+        if serializer.is_valid():
+
+            user = serializer.save()
+
+            return Response(
+                UserSerializer(user).data,
+                status=status.HTTP_201_CREATED
+            )
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )   

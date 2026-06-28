@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from resources.models import Resource
 
-
+from django.contrib.auth.models import User, Group
 from metrics.models import MetricDefinition
 class ResourceSerializer(serializers.ModelSerializer):
 
@@ -173,3 +173,37 @@ class UserSerializer(serializers.ModelSerializer):
     def get_role(self, obj):
         group = obj.groups.first()
         return group.name if group else None
+    
+class CreateUserSerializer(serializers.ModelSerializer):
+
+    role = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+
+        model = User
+
+        fields = [
+            "username",
+            "email",
+            "password",
+            "role"
+        ]
+
+    def create(self, validated_data):
+
+        role = validated_data.pop("role")
+        password = validated_data.pop("password")
+
+        user = User(
+            username=validated_data["username"],
+            email=validated_data["email"]
+        )
+
+        user.set_password(password)
+        user.save()
+
+        group = Group.objects.get(name=role)
+        user.groups.add(group)
+
+        return user
