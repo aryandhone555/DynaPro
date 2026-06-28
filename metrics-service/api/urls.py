@@ -10,8 +10,10 @@ from .views import (
     DashboardTrendView,
     ResourceHealthView,
     AlertsView,
-    CurrentUserView
+    CurrentUserView,
+    UserListView,
 )
+
 urlpatterns = [
 
     path(
@@ -52,6 +54,11 @@ urlpatterns = [
     path(
     "me/",
     CurrentUserView.as_view()
+    ),
+    path(
+    "users/",
+    UserListView.as_view(),
+    name="user-list",
     ),
 ]
 

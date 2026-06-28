@@ -23,6 +23,10 @@ from .serializers import (
 
 )
 
+from django.contrib.auth.models import User
+from .permissions import IsAdminRole
+from .serializers import UserSerializer
+
 from metrics.models import MetricData
 
 from rest_framework.permissions import IsAuthenticated #JWT AUTHENTICATION
@@ -503,6 +507,26 @@ class CurrentUserView(APIView):
 
         serializer = UserSerializer(
             request.user
+        )
+
+        return Response(
+            serializer.data
+        )
+    
+class UserListView(APIView):
+
+    permission_classes = [
+        IsAuthenticated,
+        IsAdminRole
+    ]
+
+    def get(self, request):
+
+        users = User.objects.all().order_by("id")
+
+        serializer = UserSerializer(
+            users,
+            many=True
         )
 
         return Response(
