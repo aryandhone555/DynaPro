@@ -7,17 +7,65 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("access");
+// Attach access token to every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("access");
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+// Automatically refresh expired access tokens
+api.interceptors.response.use(
+  (response) => response,
+
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      const refresh = localStorage.getItem("refresh");
+
+      if (!refresh) {
+        window.location.href = "/";
+        return Promise.reject(error);
+      }
+
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/token/refresh/`,
+          {
+            refresh,
+          }
+        );
+
+        const newAccess = response.data.access;
+
+        localStorage.setItem("access", newAccess);
+
+        originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+
+        return api(originalRequest);
+
+      } catch (err) {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+
+        window.location.href = "/";
+
+        return Promise.reject(err);
+      }
     }
 
-    return config;
-  },
-  (error) => Promise.reject(error)
+    return Promise.reject(error);
+  }
 );
 
 export default api;
