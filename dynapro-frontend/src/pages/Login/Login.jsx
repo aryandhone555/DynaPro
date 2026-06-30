@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { login } from "../../services/authService";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -17,9 +18,10 @@ function Login() {
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
 
-      alert("Login Successful!");
+    //   alert("Login Successful!");
 
-      console.log(data);
+    //   console.log(data);
+    navigate("/dashboard");
 
     } catch (err) {
       setError("Invalid username or password");
