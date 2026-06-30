@@ -1,29 +1,49 @@
+# ==========================
 # Python
+# ==========================
+
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual Environment
+# Virtual Environments
 venv/
 env/
+metrics-service/venv/
 
 # Environment Variables
 .env
+*.env
 
 # Django
 db.sqlite3
+*.sqlite3
 
-# VS Code
+# ==========================
+# Node / React
+# ==========================
+
+node_modules/
+dist/
+build/
+
+# ==========================
+# Logs
+# ==========================
+
+logs/
+*.log
+
+# ==========================
+# IDE
+# ==========================
+
 .vscode/
-
-# PyCharm
 .idea/
 
-# Logs
-logs/
-
+# ==========================
 # OS
+# ==========================
+
 .DS_Store
 Thumbs.db
-
-node_modules
