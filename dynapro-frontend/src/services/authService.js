@@ -10,13 +10,6 @@ export const login = async (username, password) => {
 };
 
 export const getCurrentUser = async () => {
-  const token = localStorage.getItem("access");
-
-  const response = await api.get("/me/", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
+  const response = await api.get("/me/");
   return response.data;
 };
