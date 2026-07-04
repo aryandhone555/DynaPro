@@ -7,6 +7,9 @@ import ResourceHealth from "../../components/dashboard/ResourceHealth";
 
 import { getDashboardSummary } from "../../services/dashboardService";
 
+import AlertsPanel from "../../components/dashboard/AlertsPanel";
+import TopOffenders from "../../components/dashboard/TopOffenders";
+import TrendChart from "../../components/dashboard/TrendChart";
 function Dashboard() {
   const [summary, setSummary] = useState(null);
 
@@ -75,21 +78,9 @@ function Dashboard() {
     <ResourceHealth />
   </div>
 
-  <div className="col-span-4">
-
-    <div className="bg-slate-800 rounded-xl p-6 h-full">
-
-      <h2 className="text-xl font-bold text-white">
-        Active Alerts
-      </h2>
-
-      <p className="text-gray-400 mt-6">
-        Alerts widget coming next...
-      </p>
-
-    </div>
-
-  </div>
+<div className="col-span-4">
+  <AlertsPanel />
+</div>
 
 </div>
 
@@ -97,33 +88,13 @@ function Dashboard() {
 
   <div className="col-span-8">
 
-    <div className="bg-slate-800 rounded-xl p-6 h-96">
-
-      <h2 className="text-xl font-bold text-white">
-        Resource Trends
-      </h2>
-
-      <p className="text-gray-400 mt-6">
-        Trend chart coming next...
-      </p>
-
-    </div>
+    <TrendChart />
 
   </div>
 
   <div className="col-span-4">
 
-    <div className="bg-slate-800 rounded-xl p-6 h-96">
-
-      <h2 className="text-xl font-bold text-white">
-        Top Offenders
-      </h2>
-
-      <p className="text-gray-400 mt-6">
-        Top offenders widget coming next...
-      </p>
-
-    </div>
+    <TopOffenders />
 
   </div>
 

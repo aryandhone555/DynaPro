@@ -18,14 +18,31 @@ class Command(BaseCommand):
             )
         )
 
+        # while True:
+
+        #     count = run_simulation()
+
+        #     self.stdout.write(
+        #         self.style.SUCCESS(
+        #             f"{count} metric records created"
+        #         )
+        #     )
+
+        #     time.sleep(10)
+
         while True:
-
-            count = run_simulation()
-
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"{count} metric records created"
-                )
+            try:
+                count = run_simulation()
+                self.stdout.write(
+                 self.style.SUCCESS(
+                f"{count} metric records created"
+                 )
+                  )
+            except Exception as e:
+                 self.stderr.write(
+            self.style.ERROR(
+                str(e)
             )
+        )
 
             time.sleep(10)

@@ -302,59 +302,66 @@ class DashboardTrendView(APIView):
 
     def get(self, request):
 
-        resource_id = request.GET.get(
-            "resource_id"
-        )
+        resource_id = request.GET.get("resource_id")
+        metric_id = request.GET.get("metric_id")
 
-        metric_id = request.GET.get(
-            "metric_id"
-        )
-
-        minutes = int(
-            request.GET.get(
-                "minutes",
-                60
-            )
-        )
+        minutes = int(request.GET.get("minutes", 60))
 
         end_time = timezone.now()
+        start_time = end_time - timedelta(minutes=minutes)
 
-        start_time = (
-            end_time -
-            timedelta(
-                minutes=minutes
-            )
-        )
+        queryset = MetricData.objects.filter(
+         timestamp__gte=start_time,
+         timestamp__lte=end_time,
+         )
+
+    # Optional filtering
+        if resource_id:
+            queryset = queryset.filter(resource_id=resource_id)
+
+        if metric_id:
+            queryset = queryset.filter(metric_id=metric_id)
+
+    # Default dashboard chart:
+    # Payment Service + Response Time
+        if not resource_id and not metric_id:
+
+             latest = (
+              MetricData.objects
+             .order_by("-timestamp")
+             .first()
+                )
+
+             if latest:
+                  queryset = queryset.filter(
+                  resource=latest.resource,
+                     metric=latest.metric
+                )
+
+        # if resource and metric:
+        #     queryset = queryset.filter(
+        #         resource=resource,
+        #         metric=metric
+        #     )
 
         queryset = (
-            MetricData.objects
-            .filter(
-                resource_id=resource_id,
-                metric_id=metric_id,
-                timestamp__gte=start_time,
-                timestamp__lte=end_time
-            )
-            .order_by(
-                "timestamp"
-            )
-            .values(
-                "timestamp",
-                "value",
-                "status"
-            )
+        queryset
+        .order_by("timestamp")
+        .values(
+            "timestamp",
+            "value",
+            "status"
         )
+    )
 
-        serializer = (
-            TrendPointSerializer(
-                queryset,
-                many=True
-            )
-        )
+        serializer = TrendPointSerializer(
+        queryset,
+        many=True
+    )
 
-        return Response(
-            serializer.data
-        )
-    
+        return Response(serializer.data)
+
+
 class ResourceHealthView(APIView):
     permission_classes = [IsAuthenticated]
 
