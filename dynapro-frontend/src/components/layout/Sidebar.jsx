@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 function Sidebar() {
   return (
     <aside className="w-64 bg-slate-800 text-white p-6">
@@ -5,19 +6,45 @@ function Sidebar() {
         DynaPro
       </h1>
 
-      <nav className="space-y-4">
-        <button className="block w-full text-left hover:text-cyan-400">
-          Dashboard
-        </button>
+      <NavLink
+        to="/dashboard"
+        className={({ isActive }) =>
+         `block rounded-lg px-3 py-2 transition ${
+         isActive
+        ? "bg-cyan-600 text-white"
+        : "hover:bg-slate-700 hover:text-cyan-400"
+        }`
+        }
+        >
+         Dashboard
+      </NavLink>
 
-        <button className="block w-full text-left hover:text-cyan-400">
-          Resources
-        </button>
+      <NavLink
+  to="/resources"
+  className={({ isActive }) =>
+    `block rounded-lg px-3 py-2 transition ${
+      isActive
+        ? "bg-cyan-600 text-white"
+        : "hover:bg-slate-700 hover:text-cyan-400"
+    }`
+  }
+>
+  Resources
+</NavLink>
 
-        <button className="block w-full text-left hover:text-cyan-400">
-          Alerts
-        </button>
-      </nav>
+<NavLink
+  to="/alerts"
+  className={({ isActive }) =>
+    `block rounded-lg px-3 py-2 transition ${
+      isActive
+        ? "bg-cyan-600 text-white"
+        : "hover:bg-slate-700 hover:text-cyan-400"
+    }`
+  }
+>
+  Alerts
+</NavLink>
+      
     </aside>
   );
 }

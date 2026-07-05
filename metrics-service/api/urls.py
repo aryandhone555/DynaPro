@@ -22,6 +22,11 @@ urlpatterns = [
     name="resource-metrics"
     ),
     path(
+    "resources/",
+    ResourceListView.as_view(),
+    name="resource-list",
+    ),
+    path(
     "metric-data/",
     MetricDataView.as_view(),
     name="metric-data"

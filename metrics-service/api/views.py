@@ -558,3 +558,18 @@ class UserListView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )   
+    
+class ResourceListView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        resources = Resource.objects.all().order_by("name")
+
+        serializer = ResourceSerializer(
+            resources,
+            many=True
+        )
+
+        return Response(serializer.data)

@@ -6,7 +6,14 @@ from django.contrib.auth.models import User, Group
 from metrics.models import MetricDefinition
 class ResourceSerializer(serializers.ModelSerializer):
 
+    status = serializers.SerializerMethodField()
+
+    last_updated = serializers.SerializerMethodField()
+
+    metrics_count = serializers.SerializerMethodField()
+
     class Meta:
+
         model = Resource
 
         fields = [
@@ -14,10 +21,43 @@ class ResourceSerializer(serializers.ModelSerializer):
             "name",
             "resource_type",
             "environment",
-            "is_active"
+            "is_active",
+            "status",
+            "last_updated",
+            "metrics_count",
         ]
+    def get_status(self, obj):
 
+        latest = (
+        MetricData.objects
+        .filter(resource=obj)
+        .order_by("-timestamp")
+        .first()
+    )
 
+        if latest:
+         return latest.status
+
+        return "UNKNOWN"
+    
+    def get_last_updated(self, obj):
+
+     latest = (
+        MetricData.objects
+        .filter(resource=obj)
+        .order_by("-timestamp")
+        .first()
+    )
+
+     if latest:
+            return latest.timestamp
+     return None
+    
+    def get_metrics_count(self, obj):
+
+        return MetricData.objects.filter(
+        resource=obj
+        ).count()
 
 class MetricDefinitionSerializer(
     serializers.ModelSerializer
