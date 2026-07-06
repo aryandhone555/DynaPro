@@ -32,6 +32,8 @@ from metrics.models import MetricData
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated #JWT AUTHENTICATION
 
+from django.shortcuts import get_object_or_404
+
 from django.utils.dateparse import (
     parse_datetime
 )
@@ -573,3 +575,41 @@ class ResourceListView(APIView):
         )
 
         return Response(serializer.data)
+    
+class ResourceDetailView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, resource_id):
+
+        resource = get_object_or_404(
+            Resource,
+            id=resource_id
+        )
+
+        latest = (
+            MetricData.objects
+            .filter(resource=resource)
+            .order_by("-timestamp")
+            .first()
+        )
+
+        return Response({
+
+            "id": resource.id,
+
+            "name": resource.name,
+
+            "resource_type": resource.resource_type,
+
+            "environment": resource.environment,
+
+            "status": latest.status if latest else "UNKNOWN",
+
+            "last_updated": (
+                latest.timestamp
+                if latest
+                else None
+            )
+
+        })

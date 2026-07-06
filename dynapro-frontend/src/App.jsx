@@ -8,6 +8,7 @@ import Login from "./pages/Login/Login";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ProtectedRoute from "./layouts/ProtectedRoute";
 import Resources from "./pages/Resources/Resources";
+import ResourceDetails from "./pages/Resources/ResourceDetails";
 
 function App() {
   return (
@@ -36,6 +37,11 @@ function App() {
               <Resources />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="/resources/:id"
+          element={<ResourceDetails />}
         />
 
       </Routes>

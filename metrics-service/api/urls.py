@@ -12,6 +12,7 @@ from .views import (
     AlertsView,
     CurrentUserView,
     UserListView,
+    ResourceDetailView,
 )
 
 urlpatterns = [
@@ -65,5 +66,10 @@ urlpatterns = [
     UserListView.as_view(),
     name="user-list",
     ),
+    path(
+    "resources/<int:resource_id>/",
+    ResourceDetailView.as_view(),
+    name="resource-detail",
+),
 ]
 

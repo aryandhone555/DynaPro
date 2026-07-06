@@ -47,4 +47,6 @@ urlpatterns = [
         "api/",
         include("api.urls")
     ),
+
+    
 ]
