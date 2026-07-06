@@ -1,47 +1,46 @@
 import ResourceRow from "./ResourceRow";
 
 function ResourcesTable({ resources }) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-slate-700">
 
-    return (
+      <table className="w-full">
 
-        <div className="bg-white rounded-xl shadow">
+        <thead className="bg-slate-700 text-slate-300 uppercase text-sm">
 
-            <table className="w-full">
+          <tr>
 
-                <thead>
+            <th className="px-6 py-4 text-left">Name</th>
 
-                    <tr className="border-b">
+            <th className="px-6 py-4 text-left">Type</th>
 
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Environment</th>
-                        <th>Status</th>
-                        <th>Metrics</th>
-                        <th>Last Updated</th>
+            <th className="px-6 py-4 text-left">Environment</th>
 
-                    </tr>
+            <th className="px-6 py-4 text-left">Status</th>
 
-                </thead>
+            <th className="px-6 py-4 text-left">Metrics</th>
 
-                <tbody>
+            <th className="px-6 py-4 text-left">Last Updated</th>
 
-                    {resources.map(resource => (
+          </tr>
 
-                        <ResourceRow
-                            key={resource.id}
-                            resource={resource}
-                        />
+        </thead>
 
-                    ))}
+        <tbody className="bg-slate-800">
 
-                </tbody>
+          {resources.map((resource) => (
+            <ResourceRow
+              key={resource.id}
+              resource={resource}
+            />
+          ))}
 
-            </table>
+        </tbody>
 
-        </div>
+      </table>
 
-    );
-
+    </div>
+  );
 }
 
 export default ResourcesTable;
